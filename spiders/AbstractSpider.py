@@ -24,10 +24,10 @@ class AbstractSpider(scrapy.Spider):
 
     def start_requests(self):
         if self.hints:
-            yield scrapy.Request(self.hints_url().replace(" ", "_"), headers=self.req_headers,
+            yield scrapy.Request(self.hints_url().replace(" ", "+"), headers=self.req_headers,
                                  meta={"dont_redirect": True}, callback=self.parse_hints)
             sleep(0.5)
-        yield scrapy.Request(self.search_url().replace(" ", "_"), headers=self.req_headers, meta={"dont_redirect": True})
+        yield scrapy.Request(self.search_url().replace(" ", "+"), headers=self.req_headers, meta={"dont_redirect": True})
 
     def hints_url(self):
         raise NotImplementedError()
@@ -64,7 +64,7 @@ class AbstractSpider(scrapy.Spider):
         if self.left > 0:
             self.endOfPageReached()
             sleep(0.5)
-            newReq = response.follow(url=self.follow_url().replace(" ", "_"),
+            newReq = response.follow(url=self.follow_url().replace(" ", "+"),
                                      headers=self.req_headers,
                                      meta={"dont_redirect": True},
                                      callback=self.parse)
