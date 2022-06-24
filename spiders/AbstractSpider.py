@@ -13,7 +13,7 @@ class AbstractSpider(scrapy.Spider):
     }
 
     def __init__(self, request, search_engine, metrics, num, hints, input_file, **kwargs):
-        self.name = request + "_" + search_engine + "_" + metrics + "-metrics" + ("_with-hints" if hints else "")
+        self.name = request.replace(" ", "_") + "_" + search_engine + "_" + metrics + "-metrics" + ("_with-hints" if hints else "")
         super().__init__(self.name)
         self.request = request
         self.search_engine = search_engine
@@ -24,10 +24,10 @@ class AbstractSpider(scrapy.Spider):
 
     def start_requests(self):
         if self.hints:
-            yield scrapy.Request(self.hints_url(), headers=self.req_headers,
+            yield scrapy.Request(self.hints_url().replace(" ", "_"), headers=self.req_headers,
                                  meta={"dont_redirect": True}, callback=self.parse_hints)
             sleep(0.5)
-        yield scrapy.Request(self.search_url(), headers=self.req_headers, meta={"dont_redirect": True})
+        yield scrapy.Request(self.search_url().replace(" ", "_"), headers=self.req_headers, meta={"dont_redirect": True})
 
     def hints_url(self):
         raise NotImplementedError()
@@ -64,7 +64,7 @@ class AbstractSpider(scrapy.Spider):
         if self.left > 0:
             self.endOfPageReached()
             sleep(0.5)
-            newReq = response.follow(url=self.follow_url(),
+            newReq = response.follow(url=self.follow_url().replace(" ", "_"),
                                      headers=self.req_headers,
                                      meta={"dont_redirect": True},
                                      callback=self.parse)

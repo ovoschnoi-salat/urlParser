@@ -15,8 +15,7 @@ def loadRequests(file):
     with open(file) as f:
         line = f.readline()
         while line:
-            for req in line.split():
-                yield req
+            yield line
             line = f.readline()
 
 
