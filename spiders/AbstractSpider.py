@@ -85,4 +85,3 @@ class AbstractSpider(scrapy.Spider):
                 if response.xpath(xpath).get() is not None:
                     return
         yield {link_key: response.url}
-        yield scr
