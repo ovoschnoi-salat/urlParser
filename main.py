@@ -3,20 +3,12 @@ from twisted.internet import reactor
 from spiders.GoogleSpider import GoogleSpider
 from spiders.YandexSpider import YandexSpider
 from utils.utils import *
-# from scrapy.utils.log import configure_logging
+from scrapy.utils.log import configure_logging
 
 spiders = {
     "google": GoogleSpider,
     "yandex": YandexSpider
 }
-
-
-def loadRequests(file):
-    with open(file) as f:
-        line = f.readline()
-        while line:
-            yield line
-            line = f.readline()
 
 
 def load_scrapy_settings():
@@ -71,13 +63,13 @@ if __name__ == "__main__":
                         default=no_metrics_value)
     parser.add_argument("-N", "--num", help="Number of results to be parsed for each request", default=8, type=int)
     parser.add_argument("-H", "--hints", action="store_true", help="Save hint for each request")
-    parser.add_argument("input_file", help="File with requests to be parsed")
+    parser.add_argument("request", nargs="+", help="File with requests to be parsed")
     config = vars(parser.parse_args())
 
-    # configure_logging()
+    configure_logging()
     runner = CrawlerRunner(settings=load_scrapy_settings())
 
-    for request in loadRequests(config["input_file"]):
+    for request in config["request"]:
         runner.crawl(spiders[config["search_engine"]], request=request, **config)
     deferred = runner.join()
     deferred.addBoth(lambda _: reactor.stop())
